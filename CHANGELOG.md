@@ -1,3 +1,11 @@
+## [1.5.8]
+
+### Changed
+
+- Optimized `ClickerT1BE` / `ClickerT2BE` tick performance: early return when tick timer hasn't elapsed, removed redundant `canRun()` calls, cached `getBlockState()` lookups
+- Optimized `RedstoneControlledBE`: use `==` for enum comparisons instead of `.equals()`, cache `RedstoneControlData` in local variables
+- Optimized `BaseMachineBE`: skip clearing empty protection cache, use `==` for enum in `canRun()`
+
 ## [1.5.7]
 
 ### Added

@@ -60,7 +60,8 @@ public class BaseMachineBE extends BlockEntity {
     }
 
     public void clearProtectionCache() {
-        chunkTestCache.clear();
+        if (!chunkTestCache.isEmpty())
+            chunkTestCache.clear();
     }
 
     public void handleTicks() {
@@ -82,7 +83,7 @@ public class BaseMachineBE extends BlockEntity {
 
     public boolean canRun() {
         if (this instanceof RedstoneControlledBE redstoneControlledBE)
-            return operationTicks == 0 || redstoneControlledBE.getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.PULSE);
+            return operationTicks == 0 || redstoneControlledBE.getRedstoneControlData().redstoneMode == MiscHelpers.RedstoneMode.PULSE;
         return operationTicks == 0;
     }
 

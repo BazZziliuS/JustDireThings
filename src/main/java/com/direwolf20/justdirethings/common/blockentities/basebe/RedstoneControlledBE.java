@@ -23,12 +23,13 @@ public interface RedstoneControlledBE {
     }
 
     default void evaluateRedstone() {
-        if (!getRedstoneControlData().checkedRedstone) {
+        RedstoneControlData data = getRedstoneControlData();
+        if (!data.checkedRedstone) {
             boolean newRedstoneSignal = getBlockEntity().getLevel().hasNeighborSignal(getBlockEntity().getBlockPos());
-            if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.PULSE) && !getRedstoneControlData().receivingRedstone && newRedstoneSignal)
-                getRedstoneControlData().pulsed = true;
-            getRedstoneControlData().receivingRedstone = newRedstoneSignal;
-            getRedstoneControlData().checkedRedstone = true;
+            if (data.redstoneMode == MiscHelpers.RedstoneMode.PULSE && !data.receivingRedstone && newRedstoneSignal)
+                data.pulsed = true;
+            data.receivingRedstone = newRedstoneSignal;
+            data.checkedRedstone = true;
             BlockState blockState = getBlockEntity().getBlockState();
             if (blockState.hasProperty(BlockBreakerT1.ACTIVE)) {
                 getBlockEntity().getLevel().setBlockAndUpdate(getBlockEntity().getBlockPos(), blockState.setValue(BlockBreakerT1.ACTIVE, isActiveRedstoneTestOnly()));
@@ -37,27 +38,30 @@ public interface RedstoneControlledBE {
     }
 
     default boolean isActiveRedstoneTestOnly() {
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.IGNORED))
+        RedstoneControlData data = getRedstoneControlData();
+        MiscHelpers.RedstoneMode mode = data.redstoneMode;
+        if (mode == MiscHelpers.RedstoneMode.IGNORED)
             return true;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.LOW))
-            return !getRedstoneControlData().receivingRedstone;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.HIGH))
-            return getRedstoneControlData().receivingRedstone;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.PULSE) && getRedstoneControlData().pulsed) {
+        if (mode == MiscHelpers.RedstoneMode.LOW)
+            return !data.receivingRedstone;
+        if (mode == MiscHelpers.RedstoneMode.HIGH)
+            return data.receivingRedstone;
+        if (mode == MiscHelpers.RedstoneMode.PULSE && data.pulsed)
             return true;
-        }
         return false;
     }
 
     default boolean isActiveRedstone() {
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.IGNORED))
+        RedstoneControlData data = getRedstoneControlData();
+        MiscHelpers.RedstoneMode mode = data.redstoneMode;
+        if (mode == MiscHelpers.RedstoneMode.IGNORED)
             return true;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.LOW))
-            return !getRedstoneControlData().receivingRedstone;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.HIGH))
-            return getRedstoneControlData().receivingRedstone;
-        if (getRedstoneControlData().redstoneMode.equals(MiscHelpers.RedstoneMode.PULSE) && getRedstoneControlData().pulsed) {
-            getRedstoneControlData().pulsed = false;
+        if (mode == MiscHelpers.RedstoneMode.LOW)
+            return !data.receivingRedstone;
+        if (mode == MiscHelpers.RedstoneMode.HIGH)
+            return data.receivingRedstone;
+        if (mode == MiscHelpers.RedstoneMode.PULSE && data.pulsed) {
+            data.pulsed = false;
             return true;
         }
         return false;
